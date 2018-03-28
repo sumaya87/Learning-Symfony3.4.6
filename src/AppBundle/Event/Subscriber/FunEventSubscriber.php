@@ -18,8 +18,8 @@ class FunEventSubscriber implements EventSubscriberInterface
     {
         return [
             FunEvent::FUN_EVENT => [
-                ['logEvent',],
-                ['logAnotherEvent',],
+                ['logEvent',1],
+                ['logAnotherEvent',3],
             ],
         ];
     }
