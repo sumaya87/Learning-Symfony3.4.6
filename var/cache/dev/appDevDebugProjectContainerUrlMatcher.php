@@ -108,14 +108,19 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
 
         // homepage
-        if ('/default' === $pathinfo) {
-            return array (  '_controller' => 'AppBundle\\Controller\\DefaultController::indexAction',  '_route' => 'homepage',);
-        }
+        if ('' === $trimmedPathinfo) {
+            $ret = array (  '_controller' => 'AppBundle\\Controller\\DefaultController::indexAction',  '_route' => 'homepage',);
+            if ('/' === substr($pathinfo, -1)) {
+                // no-op
+            } elseif ('GET' !== $canonicalMethod) {
+                goto not_homepage;
+            } else {
+                return array_replace($ret, $this->redirect($rawPathinfo.'/', 'homepage'));
+            }
 
-        // delete-post
-        if (0 === strpos($pathinfo, '/delete_post') && preg_match('#^/delete_post/(?P<id>[^/]++)$#sD', $pathinfo, $matches)) {
-            return $this->mergeDefaults(array_replace($matches, array('_route' => 'delete-post')), array (  '_controller' => 'AppBundle\\Controller\\RedditController::deleteAction',));
+            return $ret;
         }
+        not_homepage:
 
         // githut
         if (0 === strpos($pathinfo, '/githut') && preg_match('#^/githut(?:/(?P<username>[^/]++))?$#sD', $pathinfo, $matches)) {
@@ -150,6 +155,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         // update-post
         if (0 === strpos($pathinfo, '/update_post') && preg_match('#^/update_post/(?P<id>[^/]++)$#sD', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'update-post')), array (  '_controller' => 'AppBundle\\Controller\\RedditController::updateAction',));
+        }
+
+        // delete-post
+        if (0 === strpos($pathinfo, '/delete_post') && preg_match('#^/delete_post/(?P<id>[^/]++)$#sD', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'delete-post')), array (  '_controller' => 'AppBundle\\Controller\\RedditController::deleteAction',));
         }
 
         // test

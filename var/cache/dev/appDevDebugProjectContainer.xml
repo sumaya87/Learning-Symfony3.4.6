@@ -535,11 +535,19 @@
     <service id="AppBundle\Controller\TestController" class="AppBundle\Controller\TestController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
     </service>
+    <service id="AppBundle\Event\FunEvent" class="AppBundle\Event\FunEvent" public="false" autowire="true" autoconfigure="true"/>
+    <service id="AppBundle\Event\Listener\FunEventListener" class="AppBundle\Event\Listener\FunEventListener" public="false" autowire="true" autoconfigure="true"/>
     <service id="AppBundle\Service\BuzzHttpClient" class="AppBundle\Service\BuzzHttpClient" public="false" autowire="true" autoconfigure="true"/>
     <service id="AppBundle\Service\GitHubApi" class="AppBundle\Service\GitHubApi" public="false" autowire="true" autoconfigure="true"/>
     <service id="AppBundle\Service\GuzzleHttpClient" class="AppBundle\Service\GuzzleHttpClient" public="false" autowire="true" autoconfigure="true"/>
+    <service id="AppBundle\Service\OurCustomService" class="AppBundle\Service\OurCustomService" public="false" autowire="true" autoconfigure="true">
+      <argument type="service" id="debug.event_dispatcher"/>
+    </service>
     <service id="AppBundle\Service\RedditScraper" class="AppBundle\Service\RedditScraper" public="false" autowire="true" autoconfigure="true">
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
+    </service>
+    <service id="fun_event_listener" class="AppBundle\Event\Listener\FunEventListener" public="false" autowire="true" autoconfigure="true">
+      <tag name="kernel.event_listener" event="fun.event"/>
     </service>
     <service id="reddit_scraper" class="AppBundle\Service\RedditScraper" public="true" autowire="true" autoconfigure="true">
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
@@ -567,7 +575,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" public="false">
       <tag name="controller.argument_value_resolver" priority="-50"/>
-      <argument type="service" id="service_locator.sr6ctxe"/>
+      <argument type="service" id="service_locator.fs77c_v"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" public="false">
       <tag name="controller.argument_value_resolver" priority="-100"/>
@@ -1483,6 +1491,14 @@
       <argument type="service" id="debug.event_dispatcher.inner"/>
       <argument type="service" id="debug.stopwatch"/>
       <argument type="service" id="monolog.logger.event" on-invalid="null"/>
+      <call method="addListener">
+        <argument>fun.event</argument>
+        <argument type="collection">
+          <argument type="service" id="fun_event_listener"/>
+          <argument>onFunEvent</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
       <call method="addListener">
         <argument>kernel.controller</argument>
         <argument type="collection">
@@ -3676,9 +3692,18 @@
     <service id="abstract.instanceof.AppBundle\Controller\RedditController" class="AppBundle\Controller\RedditController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id="instanceof.Symfony\Bundle\FrameworkBundle\Controller\Controller.0.AppBundle\Controller\TestController" class="AppBundle\Controller\TestController" public="true" autowire="true" abstract="true"/>
     <service id="abstract.instanceof.AppBundle\Controller\TestController" class="AppBundle\Controller\TestController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id="service_locator.sr6ctxe" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id="service_locator.q1689pp" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
-      <argument type="collection"/>
+      <argument type="collection">
+        <argument key="ourCustomService" type="service" id="AppBundle\Service\OurCustomService" on-invalid="ignore"/>
+      </argument>
+    </service>
+    <service id="service_locator.fs77c_v" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="AppBundle\Controller\DefaultController:indexAction" type="service" id="service_locator.q1689pp"/>
+        <argument key="AppBundle\Controller\DefaultController::indexAction" type="service" id="service_locator.q1689pp"/>
+      </argument>
     </service>
     <service id="console.command_loader" class="Symfony\Component\Console\CommandLoader\ContainerCommandLoader" public="true">
       <argument type="service" id="service_locator.iv.jde6"/>
@@ -3918,6 +3943,10 @@
       </call>
     </service>
     <service id="monolog.handler.null_internal" class="Monolog\Handler\NullHandler"/>
+    <service id="service_locator.sr6ctxe" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection"/>
+    </service>
     <service id="debug.validator.inner" class="Symfony\Component\Validator\Validator\ValidatorInterface" public="false">
       <factory service="validator.builder" method="getValidator"/>
     </service>
