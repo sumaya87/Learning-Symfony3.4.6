@@ -16,7 +16,8 @@ class FunEventListener
 
     public function onFunEvent(FunEvent $event)
     {
-        dump('Fun Event Listener:onFunEvent (event) => '.$event);
+        dump('Fun Event Listener:onFunEvent => ');
+        dump($event);
     }
 
     public function onNewUser(
