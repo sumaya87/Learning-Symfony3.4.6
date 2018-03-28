@@ -37,7 +37,7 @@ services:
     fun_event_listener:
         class: AppBundle\Event\Listener\FunEventListener
         tags:
-            - { name: kernel.event_listener, event: fun.event }
+            - { name: kernel.event_listener, event: fun.event, method: onNewUser }
 
     reddit_scraper:
         class: AppBundle\Service\RedditScraper

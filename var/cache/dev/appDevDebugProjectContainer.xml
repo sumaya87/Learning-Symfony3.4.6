@@ -537,6 +537,9 @@
     </service>
     <service id="AppBundle\Event\FunEvent" class="AppBundle\Event\FunEvent" public="false" autowire="true" autoconfigure="true"/>
     <service id="AppBundle\Event\Listener\FunEventListener" class="AppBundle\Event\Listener\FunEventListener" public="false" autowire="true" autoconfigure="true"/>
+    <service id="AppBundle\Event\Subscriber\FunEventSubscriber" class="AppBundle\Event\Subscriber\FunEventSubscriber" public="false" autowire="true" autoconfigure="true">
+      <tag name="kernel.event_subscriber"/>
+    </service>
     <service id="AppBundle\Service\BuzzHttpClient" class="AppBundle\Service\BuzzHttpClient" public="false" autowire="true" autoconfigure="true"/>
     <service id="AppBundle\Service\GitHubApi" class="AppBundle\Service\GitHubApi" public="false" autowire="true" autoconfigure="true"/>
     <service id="AppBundle\Service\GuzzleHttpClient" class="AppBundle\Service\GuzzleHttpClient" public="false" autowire="true" autoconfigure="true"/>
@@ -547,7 +550,7 @@
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
     </service>
     <service id="fun_event_listener" class="AppBundle\Event\Listener\FunEventListener" public="false" autowire="true" autoconfigure="true">
-      <tag name="kernel.event_listener" event="fun.event"/>
+      <tag name="kernel.event_listener" event="fun.event" method="onNewUser"/>
     </service>
     <service id="reddit_scraper" class="AppBundle\Service\RedditScraper" public="true" autowire="true" autoconfigure="true">
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
@@ -1495,7 +1498,7 @@
         <argument>fun.event</argument>
         <argument type="collection">
           <argument type="service" id="fun_event_listener"/>
-          <argument>onFunEvent</argument>
+          <argument>onNewUser</argument>
         </argument>
         <argument>0</argument>
       </call>
@@ -1504,6 +1507,14 @@
         <argument type="collection">
           <argument type="service" id="data_collector.router"/>
           <argument>onKernelController</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>fun.event</argument>
+        <argument type="collection">
+          <argument type="service" id="AppBundle\Event\Subscriber\FunEventSubscriber"/>
+          <argument>logEvent</argument>
         </argument>
         <argument>0</argument>
       </call>
@@ -1645,14 +1656,6 @@
       </call>
       <call method="addListener">
         <argument>kernel.request</argument>
-        <argument type="collection">
-          <argument type="service" id="debug.debug_handlers_listener"/>
-          <argument>configure</argument>
-        </argument>
-        <argument>2048</argument>
-      </call>
-      <call method="addListener">
-        <argument>console.command</argument>
         <argument type="collection">
           <argument type="service" id="debug.debug_handlers_listener"/>
           <argument>configure</argument>
@@ -3692,6 +3695,8 @@
     <service id="abstract.instanceof.AppBundle\Controller\RedditController" class="AppBundle\Controller\RedditController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
     <service id="instanceof.Symfony\Bundle\FrameworkBundle\Controller\Controller.0.AppBundle\Controller\TestController" class="AppBundle\Controller\TestController" public="true" autowire="true" abstract="true"/>
     <service id="abstract.instanceof.AppBundle\Controller\TestController" class="AppBundle\Controller\TestController" public="true" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id="instanceof.Symfony\Component\EventDispatcher\EventSubscriberInterface.0.AppBundle\Event\Subscriber\FunEventSubscriber" class="AppBundle\Event\Subscriber\FunEventSubscriber" public="false" autowire="true" abstract="true"/>
+    <service id="abstract.instanceof.AppBundle\Event\Subscriber\FunEventSubscriber" class="AppBundle\Event\Subscriber\FunEventSubscriber" public="false" autowire="true" autoconfigure="true" abstract="true"/>
     <service id="service_locator.q1689pp" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">

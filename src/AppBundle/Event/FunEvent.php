@@ -13,6 +13,6 @@ use Symfony\Component\EventDispatcher\Event;
 class FunEvent extends Event
 {
 
-    public const FUN_EVENT = 'fun.event';
+    const FUN_EVENT = 'fun.event';
 
 }

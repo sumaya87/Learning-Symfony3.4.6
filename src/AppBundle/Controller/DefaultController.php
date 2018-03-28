@@ -2,12 +2,10 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Event\FunEvent;
 
 use AppBundle\Service\OurCustomService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 
