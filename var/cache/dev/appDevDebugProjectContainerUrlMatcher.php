@@ -122,6 +122,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         }
         not_homepage:
 
+        // form_example
+        if ('/form' === $pathinfo) {
+            return array (  '_controller' => 'AppBundle\\Controller\\FormExampleController::formExampleAction',  '_route' => 'form_example',);
+        }
+
         // githut
         if (0 === strpos($pathinfo, '/githut') && preg_match('#^/githut(?:/(?P<username>[^/]++))?$#sD', $pathinfo, $matches)) {
             return $this->mergeDefaults(array_replace($matches, array('_route' => 'githut')), array (  'username' => 'sumaya87',  '_controller' => 'AppBundle\\Controller\\GitHutController::githutAction',));
